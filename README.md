@@ -1,6 +1,6 @@
 # Trip Planner
 
-An autonomous multi-agent travel planning system that converts natural-language trip requests into verified, budget-constrained, weather-checked round-trip itineraries.
+A deterministic agentic workflow with LLM-powered travel planning system that converts natural-language trip requests into verified, budget-constrained, weather-checked round-trip itineraries.
 
 ## Overview
 
