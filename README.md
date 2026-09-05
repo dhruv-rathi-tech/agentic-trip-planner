@@ -4,34 +4,26 @@ An autonomous multi-agent travel planning system that converts natural-language 
 
 ## Overview
 
-Trip Planner accepts an unstructured trip request — origin, destination, duration, budget, and start date — and orchestrates a pipeline of specialized components to produce a complete itinerary.
+Trip Planner takes a plain-language trip request and turns it into a complete, budget-checked itinerary — flights, hotel, and weather — without the user having to manually cross-check multiple sites.
 
-The system uses a Groq LLM at two points: once to extract structured trip data from natural language, and once to synthesize the final plain-text itinerary. Everything between — weather evaluation, airport resolution, flight and hotel search, scoring, budget filtering, and verification — is deterministic Python.
+An agentic pipeline handles this end-to-end: one stage understands the request, another searches flights, hotels, and weather concurrently, another scores and combines the results, and a final stage verifies the chosen plan actually fits the budget before presenting it.
 
-Flight and hotel searches run concurrently via `asyncio`. Flight candidates are retrieved as genuine round trips from SerpApi Google Flights; return leg segments are resolved using per-candidate departure tokens rather than synthesized. Hotel data comes from the RouteStack partner API using dynamically resolved destination IDs.
-
-Before generating the final itinerary, the system verifies that the selected combination fits within the user's budget (with a 5% tolerance). If weather at the destination is unsuitable, alternative departure dates are suggested automatically.
+Multiple external services are used because no single source reliably covers flights, hotels, and weather together. Budget is enforced as a constraint throughout the process, not just checked at the end, so the final output is dependable rather than approximate.
 
 ## Key Features
 
 - Natural-language trip parsing into structured plan (origin, destination, dates, budget, preferences)
 - Concurrent flight, hotel, and weather searches via asyncio
-
 - Weather-aware planning with automatic alternate-date search on poor forecasts
-
 - Multi-factor scoring for flights (price, duration, stops) and hotels (price, rating, reviews)
-
 - Budget-aware combination generation with configurable tolerance buffer
-
 - Reflection/verification step before finalizing a plan
-
 - LLM-generated final itinerary in a clean, readable format
 
 ## How It Works
 
 1. User enters a natural-language trip request.
 2. The LLM planner extracts origin, destination, dates, duration, and budget as validated structured JSON.
-
 3. Weather is checked first; if poor, the user can request alternative dates. The system scans the next 10 days to find a window with suitable conditions.
 4. With dates confirmed, flight and hotel searches execute concurrently. 
 5. The flight tool then queries SerpApi for round-trip options.
@@ -202,6 +194,12 @@ No bookings have been made; the information above is based on verified travel re
 - SerpApi free tier is limited to 250 searches/month
 - Weather data beyond 15 days uses historical estimates from the previous year
 - No booking or payment functionality — the system is informational only
+
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 ## Author
 
